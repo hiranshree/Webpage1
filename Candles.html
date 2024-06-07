@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="candleApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Candles</title>
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+  <style>
+    body {
+      background-image: url('https://i.pinimg.com/564x/e3/76/38/e376387eb6beb503161f27025f5779f5.jpg');
+      background-position: center;
+      opacity: 1.0;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" ng-controller="OrderController as orderCtrl">
+    <h1 class="mb-4">Order Your Candles</h1>
+    <div class="row">
+      <div class="col-md-4" ng-repeat="candle in orderCtrl.candles">
+        <img ng-src="{{ candle.image }}" class="img-fluid" alt="Candle Image">
+        <h3>{{ candle.name }}</h3>
+        <h3>Price: ${{ candle.price }}</h3>
+      </div>
+    </div>
+    <hr>
+    <form id="orderForm">
+      <div class="form-group">
+        <label for="candleType">Candle Type</label>
+        <select class="form-control" id="candleType" ng-model="orderCtrl.selectedCandle" ng-options="candle.name for candle in orderCtrl.candles" required>
+          <option value="">Select Candle Type</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" class="form-control" id="quantity" ng-model="orderCtrl.quantity" min="1" value="1" required>
+      </div>
+      <div class="form-group">
+        <label for="deliveryAddress">Delivery Address</label>
+        <textarea class="form-control" id="deliveryAddress" ng-model="orderCtrl.deliveryAddress" rows="3" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="totalPrice">Total Price</label>
+        <input type="text" class="form-control" id="totalPrice" ng-model="orderCtrl.totalPrice" readonly>
+      </div>
+      <button type="button" class="btn btn-primary" ng-click="orderCtrl.placeOrder()">Place Order</button>
+    </form>
+  </div>
+
+  <!-- Bootstrap JS and dependencies (jQuery, Popper.js) -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    angular.module('candleApp', [])
+      .controller('OrderController', function() {
+        var vm = this;
+        vm.candles = [
+          {
+            name: 'Pumpkin Spice Scented Candle',
+            price: 15,
+            image: 'https://i.pinimg.com/736x/49/b5/6b/49b56b6091c99aa2808bbfc6f5b0b1d5.jpg'
+          },
+          {
+            name: 'Honey Scented Candle',
+            price: 20,
+            image: 'https://i.pinimg.com/736x/c6/f2/de/c6f2de0c031427d6d5b455c897c90091.jpg'
+          },
+          {
+            name: 'Cinnamon Clove Citrus Scented Candle',
+            price: 30,
+            image: 'https://i.pinimg.com/564x/a7/ef/fc/a7effcc6f0b966a9d09b1b8b7c63e024.jpg'
+          }
+        ];
+
+        vm.placeOrder = function() {
+          var selectedCandle = vm.selectedCandle;
+          var quantity = vm.quantity;
+          var deliveryAddress = vm.deliveryAddress;
+
+          if (!selectedCandle || !quantity || !deliveryAddress) {
+            alert("Please fill in all the required fields.");
+            return;
+          }
+
+          var totalPrice = selectedCandle.price * parseInt(quantity);
+
+          var confirmationMessage = "Are you sure you want to place the order?\n\n" +
+            "Candle Type: " + selectedCandle.name + "\n" +
+            "Quantity: " + quantity + "\n" +
+            "Delivery Address: " + deliveryAddress + "\n" +
+            "Total Price: $" + totalPrice.toFixed(2);
+
+          if (confirm(confirmationMessage)) {
+            alert("Your order has been placed! Thank you for shopping with us.");
+
+            // Display the total price in the total price input field
+            vm.totalPrice = "$" + totalPrice.toFixed(2);
+            // Reset the form
+            vm.selectedCandle = null;
+            vm.quantity = 1;
+            vm.deliveryAddress = '';
+          }
+        };
+      });
+  </script>
+</body>
+</html>
